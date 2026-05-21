@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Pharmacy AI Auditor - Enterprise Workspace</title>
+    <link rel="stylesheet" href="pro1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="splash-screen" class="screen active">
+        <div class="splash-content">
+            <div class="ai-logo-container">
+                <i class="fa-solid fa-notes-medical splash-icon"></i>
+            </div>
+            <h1 class="splash-title">Smart Pharmacy</h1>
+            <p class="splash-subtitle"> Auditor System Workspace</p>
+            <div class="loading-bar"><div class="progress"></div></div>
+        </div>
+    </div>
+
+    <div id="login-screen" class="screen">
+        <div class="login-wrapper">
+            
+            <div id="profile-selection-container" class="profile-container-grid">
+                <div id="profile-consumer" class="profile-gate" data-role="Consumer" onclick="setSessionRole('consumer1.html', 'Consumer Account')">
+                    <div class="avatar-circle">
+                        <i class="fa-solid fa-user-injured"></i>
+                    </div>
+                    <h2 class="profile-name">Consumer Account</h2>
+                    <p class="click-to-sign-in">Click to unlock workspace</p>
+                </div>
+
+                <div id="profile-producer" class="profile-gate" data-role="Producer" onclick="setSessionRole('producer.html', 'Producer Account')">
+                    <div class="avatar-circle">
+                        <i class="fa-solid fa-prescription-bottle-medical"></i>
+                    </div>
+                    <h2 class="profile-name">Producer Account</h2>
+                    <p class="click-to-sign-in">Click to unlock workspace</p>
+                </div>
+            </div>
+
+            <form id="login-form" class="hidden" onsubmit="executeSecureRouting(event)">
+                <h3 id="form-heading-role">Unlock Workspace</h3>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <i class="fa-solid fa-user-tag field-icon"></i>
+                        <input type="text" id="username" placeholder="Full Name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-envelope field-icon"></i>
+                        <input type="email" id="email" placeholder="Email Address" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-phone field-icon"></i>
+                        <input type="tel" id="phone" placeholder="Phone Number" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock field-icon"></i>
+                        <input type="password" id="password" placeholder="Enter System Password" required>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="btn-back-to-profiles" class="btn-secondary-action" onclick="revertToProfileSelection()">
+                        <i class="fa-solid fa-arrow-left"></i> Back
+                    </button>
+                    <button type="submit" class="btn-login">
+                        Launch System Interface <i class="fa-solid fa-right-to-bracket"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let runtimeTargetPage = "";
+
+        // Sets role context target when a profile tile is clicked
+        function setSessionRole(targetPage, roleLabel) {
+            runtimeTargetPage = targetPage;
+            
+            // Sync form header text smoothly
+            const heading = document.getElementById("form-heading-role");
+            if(heading) heading.innerText = `Unlock ${roleLabel}`;
+
+            // Hide profiles grid and reveal verification fields
+            document.getElementById("profile-selection-container").classList.add("hidden");
+            document.getElementById("login-form").classList.remove("hidden");
+        }
+
+        // Resets UI view back to selector mode
+        function revertToProfileSelection() {
+            document.getElementById("login-form").classList.add("hidden");
+            document.getElementById("profile-selection-container").classList.remove("hidden");
+        }
+
+        // Handles validation submit and routes to appropriate dynamic endpoint
+        function executeSecureRouting(event) {
+            event.preventDefault(); 
+            if(runtimeTargetPage !== "") {
+                window.location.href = runtimeTargetPage;
+            }
+        }
+
+        // Splash screen fade controller fallback if pro1.js layout lags
+        window.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                const splash = document.getElementById("splash-screen");
+                const login = document.getElementById("login-screen");
+                if(splash && login && splash.classList.contains("active")) {
+                    splash.classList.remove("active");
+                    login.classList.add("active");
+                }
+            }, 2500); // Synchronized animation delay timing
+        });
+    </script>
+
+    <script src="pro1.js"></script>
+</body>
+</html>

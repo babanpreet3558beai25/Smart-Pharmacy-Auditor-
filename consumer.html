@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSync Core System Console</title>
+    <link rel="stylesheet" href="consumer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+
+    <div class="workspace-master-container">
+        
+        <div class="portal-primary-area">
+            
+            <nav class="portal-navbar">
+                <div class="brand-logo-section">
+                    <i class="fa-solid fa-heart-pulse brand-emblem"></i>
+                    <h2>MediSync</h2>
+                </div>
+                
+                <div class="location-badge-pill" id="location-dropdown-trigger">
+                    <i class="fa-solid fa-location-dot map-marker"></i>
+                    <div class="location-details">
+                        <span class="loc-lbl">DELIVERING TO</span>
+                        <span id="user-display-name" class="loc-val">Tamana, 147002</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+                    
+                    <div class="address-dropdown-panel" id="address-dropdown-panel">
+                        <div class="dropdown-header">
+                            <h4><i class="fa-solid fa-map-location-dot"></i> Delivery Address</h4>
+                        </div>
+                        <div class="dropdown-body">
+                            <div class="address-info-row">
+                                <span class="info-label">Name</span>
+                                <span class="info-value" id="dropdown-user-name">Tamana</span>
+                            </div>
+                            <div class="address-info-row">
+                                <span class="info-label">Phone</span>
+                                <span class="info-value" id="dropdown-user-phone">9876543210</span>
+                            </div>
+                            <div class="address-info-row">
+                                <span class="info-label">Pincode</span>
+                                <span class="info-value" id="dropdown-user-pincode">147002</span>
+                            </div>
+                            <div class="address-info-row full-width">
+                                <span class="info-label">Address</span>
+                                <span class="info-value" id="dropdown-user-address">Model Town, Phase 1, Near Central Park</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-footer">
+                            <button class="btn-edit-address" onclick="openProfileSettingsModal(); closeAddressDropdown();">
+                                <i class="fa-solid fa-pen"></i> Edit Address
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="navbar-search-bar">
+                    <i class="fa-solid fa-magnifying-glass search-ico"></i>
+                    <input type="text" id="dashboard-search-field" placeholder="Search medicines, health products or tests..." oninput="filterActiveWorkspace()">
+                </div>
+
+                <div class="nav-right-actions">
+                    <div class="wallet-pill-status">
+                        <i class="fa-solid fa-wallet"></i> ₹1,500.00
+                    </div>
+                    <div class="cart-total-banner-pill" onclick="openInteractiveCartOverlay()">
+                        <i class="fa-solid fa-cart-shopping"></i> 
+                        <span id="nav-cart-count-badge">0</span> Items - 
+                        <span id="nav-cart-total-amount">₹0.00</span>
+                    </div>
+                
+                    <button class="nav-settings-wheel-trigger" title="Account & Portal Settings" onclick="openProfileSettingsModal()">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                    
+                </div>
+            </nav>
+
+            <div class="portal-sub-menu">
+                <button id="tab-meds-trigger" class="sub-menu-item active" onclick="switchActiveTab(event, 'MEDS')">
+                    <i class="fa-solid fa-pills"></i> Medicines
+                </button>
+                <button id="tab-labs-trigger" class="sub-menu-item" onclick="switchActiveTab(event, 'LABS')">
+                    <i class="fa-solid fa-microscope"></i> Lab Tests
+                </button>
+                <button id="tab-care-trigger" class="sub-menu-item" onclick="switchActiveTab(event, 'CARE')">
+                    <i class="fa-solid fa-basket-shopping"></i> Self Care
+                </button>
+                <button id="tab-orders-trigger" class="sub-menu-item" onclick="switchActiveTab(event, 'ORDERS')">
+                    <i class="fa-solid fa-box"></i> Your Orders
+                </button>
+                <button id="exitBtn" class="nav-exit-btn"
+                onclick = "goBackProject()"> Exit</button>
+
+            </div>
+
+            <div class="portal-scrollable-content">
+
+                <div id="medicines-view-section">
+                    <div class="inventory-dashboard-meta">
+                        <div class="meta-left">
+                            <h3>Prescription & OTC Inventory</h3>
+                            <p>Verify matching pharmaceutical components before updating active user sessions.</p>
+                        </div>
+                        <span class="status-pill"><i class="fa-solid fa-shield-halved"></i> FDA Approved Stack</span>
+                    </div>
+                    <div id="medicine-dashboard-grid" class="products-flex-grid"></div>
+                </div>
+
+                <div id="lab-tests-view-section" class="hidden">
+                    <div class="inventory-dashboard-meta">
+                        <div class="meta-left">
+                            <h3>Diagnostic Lab Test Formats</h3>
+                            <p>Certified clinical pathology health checks right from the comfort of your home.</p>
+                        </div>
+                        <span class="status-pill verified"><i class="fa-solid fa-flask-vial"></i> NABL Certified</span>
+                    </div>
+                    <div id="lab-tests-dashboard-grid" class="products-flex-grid"></div>
+                </div>
+
+                <div id="self-care-view-section" class="hidden">
+                    <div class="inventory-dashboard-meta">
+                        <div class="meta-left">
+                            <h3>Hygiene & Self Care Essentials</h3>
+                            <p>Premium skin, hair, and dental personal care products catalog stack.</p>
+                        </div>
+                        <span class="status-pill" style="background:#fce7f3; color:#db2777;"><i class="fa-solid fa-sparkles"></i> 100% Authentic</span>
+                    </div>
+                    <div id="self-care-dashboard-grid" class="products-flex-grid"></div>
+                </div>
+
+                <div id="orders-history-view-section" class="hidden">
+                    <div class="inventory-dashboard-meta">
+                        <div class="meta-left">
+                            <h3>Your Placed Orders & Receipts</h3>
+                            <p>Track your archived real-time purchase logs with exact automated pricing breakups.</p>
+                        </div>
+                        <span class="status-pill verified"><i class="fa-solid fa-clock-rotate-left"></i> Transaction Ledger</span>
+                    </div>
+                    <div id="orders-history-dashboard-grid" class="products-flex-grid"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="ai-side-assistant-panel" id="ai-side-panel">
+            <div class="ai-panel-header">
+                <div class="ai-identity">
+                    <div class="ai-sparkle-avatar">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <div class="ai-title-meta">
+                        <h4>Gemini AI Auditor</h4>
+                        <div class="status-online"><span class="dot"></span> Online</div>
+                    </div>
+                </div>
+                <div class="ai-header-actions">
+                    <button class="ai-reset-session" title="Clear Stream Logs" onclick="clearAIChat()">
+                        <i class="fa-solid fa-eraser"></i>
+                    </button>
+                    <button class="ai-close-panel" title="Close Panel" onclick="toggleAIPanel()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="ai-messages-box-body" id="ai-chat-scroller">
+                <div class="msg-bubble system-bot">
+                    <div class="msg-content">
+                        <p>Hello! I am your real-time Clinical Interaction Auditor. Click any item card to see instant clinical advantages. You can also type <strong>any question</strong> below about medicines, healthcare, or dosages, and I will extract the details for you!</p>
+                        <span class="msg-time-stamp">System Initialized</span>
+                    </div>
+                </div>
+
+                <div id="ai-product-insights" style="display: none; background: #1f2937; border: 1px solid #374151; border-radius: 8px; overflow: hidden; margin-bottom: 10px;">
+                    <div style="background: #111827; padding: 10px 15px; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #374151;">
+                        <span style="color: #38bdf8; font-weight: 600;"><i class="fa-solid fa-circle-nodes"></i> Clicked Item Analysis</span>
+                        <span style="font-size: 0.75rem; background: #00a599; padding: 2px 6px; border-radius: 4px; color: white; font-weight: bold;">Stored</span>
+                    </div>
+                    <div style="padding: 15px;">
+                        <h4 id="ai-product-title" style="color: #ffffff; margin: 0 0 8px 0; font-size: 1rem;">Product Title</h4>
+                        <div id="ai-product-description" style="color: #d1d5db; font-size: 0.85rem; line-height: 1.4;">Select an item card...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ai-footer-input-tray">
+                <div class="pill-input-container">
+                    <input type="text" id="ai-user-prompt-field" placeholder="Ask Gemini anything or type 'audit my cart'..." onkeypress="handleAIViaKey(event)">
+                    <button class="btn-ai-dispatch" onclick="sendPromptToGemini()">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+                <p class="ai-disclaimer-lbl">Automated AI diagnostics tool setup logs.</p>
+            </div>
+        </div>
+
+        <div class="ai-panel-backdrop" id="ai-panel-backdrop" onclick="toggleAIPanel()"></div>
+
+    </div>
+
+    <div id="application-cart-overlay" class="custom-modal-overlay hidden">
+        <div class="modal-card-frame">
+            <div class="modal-card-header">
+                <h3><i class="fa-solid fa-basket-shopping"></i> Review Your Active Workspace Cart</h3>
+                <button class="close-overlay-btn" onclick="closeInteractiveCartOverlay()">&times;</button>
+            </div>
+            
+            <div class="modal-cart-items-scroller" id="modal-cart-items-list-root"></div>
+
+            <div class="modal-billing-summary-footer">
+                <div class="summary-meta-sub-row">
+                    <span>Total Cart Value:</span>
+                    <span id="modal-raw-total-value">₹0.00</span>
+                </div>
+                <div class="summary-meta-sub-row discount-highlight">
+                    <span>Flat 15% Off Discount:</span>
+                    <span id="modal-discount-value">-₹0.00</span>
+                </div>
+                <div class="summary-meta-row">
+                    <span>Net Payable Amount:</span>
+                    <span id="modal-grand-total-value" class="grand-total-highlight-val">₹0.00</span>
+                </div>
+                <button class="btn-checkout-execution-trigger" onclick="executeOrderPlacementRoute()">
+                    <i class="fa-solid fa-circle-check"></i> Place My Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="portal-settings-overlay" class="custom-modal-overlay hidden">
+        <div class="modal-card-frame settings-form-frame">
+            <div class="modal-card-header">
+                <h3><i class="fa-solid fa-sliders"></i> Update Console Profile Settings</h3>
+                <button class="close-overlay-btn" onclick="closeProfileSettingsModal()">&times;</button>
+            </div>
+            <div class="settings-modal-body">
+                <form id="profile-management-form" onsubmit="saveUserProfileData(event)">
+                    <div class="form-grid-layout">
+                        <div class="form-control-group">
+                            <label for="settings-user-name"><i class="fa-solid fa-user"></i> Full Username</label>
+                            <input type="text" id="settings-user-name" placeholder="e.g. Tamana" required>
+                        </div>
+                        <div class="form-control-group">
+                            <label for="settings-user-phone"><i class="fa-solid fa-phone"></i> Contact Number</label>
+                            <input type="tel" id="settings-user-phone" placeholder="e.g. +91 9876543210" required>
+                        </div>
+                        <div class="form-control-group">
+                            <label for="settings-user-pincode"><i class="fa-solid fa-map-pin"></i> Area Pincode</label>
+                            <input type="text" id="settings-user-pincode" placeholder="e.g. 147002" maxlength="6" required>
+                        </div>
+                        <div class="form-control-group full-width-control">
+                            <label for="settings-user-address"><i class="fa-solid fa-house-chimney"></i> Delivery Address</label>
+                            <textarea id="settings-user-address" rows="3" placeholder="Enter full residence location block address..." required></textarea>
+                        </div>
+                    </div>
+                    <div class="settings-form-actions">
+                        <button type="button" class="btn-settings-cancel" onclick="closeProfileSettingsModal()">Discard Changes</button>
+                        <button type="submit" class="btn-settings-save"><i class="fa-solid fa-floppy-disk"></i> Commit Profile Updates</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /// CONFIGURATION ENGINE & CENTRAL CREDENTIALS
+        const GEMINI_API_KEY = "AIzaSyBbbPktiFDg7c6FwgC35YhMHRszwi7kB4U";
+        const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+        // MODULE 1: INVENTORY DATASETS
+        const MEDICINE_DATASET = [
+    
+            { id: 1, type: "MED", name: "Paracetamol", composition: "Analgesic & Antipyretic | 500mg", price: 20.00, otc: false },
+            { id: 2, type: "MED", name: "Crocin", composition: "Fast Relief Headache Salt | 15 Tablets", price: 24.50, otc: true },
+            { id: 3, type: "MED", name: "Dolo 650", composition: "Fever & Cold Management | 650mg Micro Labs", price: 30.00, otc: false },
+            { id: 4, type: "MED", name: "Neuronbion Forte Injection", composition: "vitamin B complex + Nicotinamaide | 2ml Ampoule", price: 14.70, otc: false },
+            { id: 5, type: "MED", name: "Brufen", composition: "Abbott Core Musculoskeletal Relief | 200ml Syrup", price: 42.00, otc: false },
+            { id: 6, type: "MED", name: "Combiflam Analgestic Matrix", composition: "Paracetamol + Ibuprofen Matrix | Sanofi", price: 26.70, otc: false },
+            { id: 7, type: "MED", name: "Benadryl", composition: "Cough Formula Anti-Allergy | 100ml Bottle", price: 125.00, otc: true },
+            { id: 8, type: "MED", name: "Atorva 10mg Cholesterol", composition: "Atorvastatin 10mg", price: 85.00, otc: false },
+            { id: 9, type: "MED", name: "Vicks Action 500", composition: "Multi-Symptom Cold Relief | 10 Tablets Strip", price: 45.00, otc: true },
+            { id: 10, type: "MED", name: "Cetirizine", composition: "Anti-Histamine Allergy Response | 10mg Strip", price: 15.00, otc: false },
+            { id: 11, type: "MED", name: "Loratadine", composition: "24-Hr Non-Drowsy Allergy Shield | 10mg Tablets", price: 35.50, otc: false },
+            { id: 12, type: "MED", name: "Allegra", composition: "Fexofenadine Hydrochloride | Sanofi 120mg", price: 210.00, otc: false },
+            { id: 13, type: "MED", name: "Amoxicillin", composition: "Broad-Spectrum Penicillin Antibiotic | 500mg", price: 85.00, otc: false },
+            { id: 14, type: "MED", name: "Azithromycin", composition: "Azithral Anti-Bacterial Block | 500mg x 5 Tab", price: 130.00, otc: false },
+            { id: 15, type: "MED", name: "Handsaplast Band-Aid Strips", composition: "Sterile Adhesive First Aid Strip", price: 20.00, otc: true },
+            { id: 16, type: "MED", name: "Metronidazole", composition: "Flagyl Amoebic Anti-Infective Formula | 400mg", price: 22.00, otc: false },
+            { id: 17, type: "MED", name: "Digene", composition: "Antacid & Antigas Gel Formulation | Mint Twist", price: 135.00, otc: true },
+            { id: 18, type: "MED", name: "ENO", composition: "Sachet Fast Action Formula Gas Relief | 6g Pocket", price: 10.00, otc: true },
+            { id: 19, type: "MED", name: "Pantoprazole", composition: "Gastro-Resistant Proton Pump Inhibitor | 40mg", price: 90.00, otc: false },
+            { id: 20, type: "MED", name: "ORS", composition: "WHO Oral Rehydration Salts Formula | Apple Infusion", price: 22.50, otc: true },
+            { id: 21, type: "MED", name: "Betadine", composition: "Povidone-Iodine 10% Antiseptic Water Ointment", price: 115.00, otc: true },
+            { id: 22, type: "MED", name: "Soframycin", composition: "Framycetin Skin Bacterial Cream | 30g Tube", price: 55.00, otc: true },
+            { id: 23, type: "MED", name: "Burnol", composition: "First Aid Burn Dressing Ointment | Matrix Shield", price: 68.00, otc: true },
+            { id: 24, type: "MED", name: "Aspirin", composition: "Cardiovascular Blood Thinning Pill | 75mg Gastro", price: 12.00, otc: false },
+            { id: 25, type: "MED", name: "Sumatriptan", composition: "Migraine Vascular Attack Relief | 50mg Strip", price: 175.00, otc: false },
+            { id: 26, type: "MED", name: "Revital H", composition: "Daily Energy Ginseng + Multivitamins Complex", price: 310.00, otc: true },
+            { id: 27, type: "MED", name: "Shelcal", composition: "Calcium 500mg + Vitamin D3 Daily Bones Stack", price: 120.00, otc: true },
+            { id: 28, type: "MED", name: "Zincovit", composition: "Immune Multi-Mineral Nutritional Support | 15 Tab", price: 110.00, otc: true },
+            { id: 29, type: "MED", name: "Volini Gel", composition: "Diclofenac Fast Sprinter Pain Reliever Pain-Cream", price: 145.00, otc: true },
+            { id: 30, type: "MED", name: "Moov Spray", composition: "Fortified Ayurvedic Backache Relief Aerosol Mist", price: 160.00, otc: true }
+        ];
+
+        const LAB_TESTS_DATASET = [
+            { id: 101, type: "LAB", name: "Complete Blood Count (CBC)", composition: "Measures RBC, WBC, Hemoglobin & Platelets matrix profile.", price: 299.00 },
+            { id: 102, type: "LAB", name: "Blood Glucose Test", composition: "Monitors Fasting/Post-Prandial sugar concentration levels.", price: 99.00 },
+            { id: 103, type: "LAB", name: "Lipid Profile", composition: "Comprehensive analysis of Cholesterol, HDL, LDL, and Triglycerides.", price: 450.00 }
+        ];
+
+        const SELF_CARE_DATASET = [
+            { id: 201, type: "CARE", name: "Sebamed Baby Skin Cleanser", composition: "ph 5.5 soap-free Baby Cleansing Wash | 200ml", price: 410.00, icon: "fa-solid fa-shower", subCategory: "wash" },
+            { id: 202, type: "CARE", name: "Dr.Trust digital thermometer", composition: "Digital Fever Temperature Monitor", price: 299.00, icon: "Diagnostic Device", subCategory: "Medical Device" },
+            { id: 203, type: "CARE", name: "Dettol Body Wash", composition: "Anti-Bacterial Intense Cool Body Wash", price: 199.00, icon: "fa-solid fa-shower", subCategory: "wash" },
+            { id: 204, type: "CARE", name: "Himalaya Neem Face Wash", composition: "Purifying Anti-Acne Herbal Formula", price: 140.00, icon: "fa-solid fa-leaf", subCategory: "face" },
+            { id: 205, type: "CARE", name: "Clean & Clear Face Wash", composition: "Foaming Oil-Free Daily Face Cleanser", price: 125.00, icon: "fa-solid fa-pump-soap", subCategory: "face" },
+            { id: 206, type: "CARE", name: "Lakme Sun Expert Sunscreen", composition: "Ultra Matte Gel | SPF 50 PA+++ Protection", price: 345.00, icon: "fa-solid fa-sun", subCategory: "cream" },
+            { id: 207, type: "CARE", name: "Nivea Body Lotion", composition: "Deep Moisture Serum nourishing lotion", price: 275.00, icon: "fa-solid fa-pump-medical", subCategory: "lotion" },
+            { id: 208, type: "CARE", name: "Vaseline Petroleum Jelly", composition: "Pure Skin Protectant Original Moisture", price: 85.00, icon: "fa-solid fa-jar", subCategory: "jelly" },
+            { id: 209, type: "CARE", name: "Parachute Coconut Hair Oil", composition: "100% Pure Edible Coconut Oil Grade", price: 110.00, icon: "fa-solid fa-droplet", subCategory: "oil" },
+            { id: 210, type: "CARE", name: "Clinic Plus Shampoo", composition: "Strong & Long Health Anti-Hairfall Treatment", price: 135.00, icon: "fa-solid fa-wind", subCategory: "hair" },
+            { id: 211, type: "CARE", name: "Pantene Conditioner", composition: "Advanced Hair Fall Control Solution", price: 180.00, icon: "fa-solid fa-spray-can-sparkles", subCategory: "hair" },
+            { id: 212, type: "CARE", name: "Colgate Toothpaste", composition: "Strong Teeth Dental Cavity Protection Pack", price: 95.00, icon: "fa-solid fa-tooth", subCategory: "dental" },
+            { id: 213, type: "CARE", name: "Oral-B Toothbrush", composition: "CrissCross Extra Soft Bristles Brush", price: 50.00, icon: "fa-solid fa-broom", subCategory: "dental" },
+            { id: 214, type: "CARE", name: "Listerine Mouthwash", composition: "Cool Mint Germ-Kill Antiseptic Rinse", price: 165.00, icon: "fa-solid fa-bottle-droplet", subCategory: "dental" },
+            { id: 215, type: "CARE", name: "Neutrogena Moisturizer", composition: "Hydro Boost Water Gel Deep Hydration", price: 440.00, icon: "fa-solid fa-water", subCategory: "cream" }
+        ];
+
+        // STATE MANAGEMENT VARIABLES
+        let APPLICATION_CART = {};
+        let SYSTEM_ACTIVE_TAB = "MEDS";
+        let PLACED_ORDERS_HISTORY = JSON.parse(localStorage.getItem("MEDISYNC_ORDER_HISTORY")) || [];
+        let isAIPanelOpen = false;
+        let isAddressDropdownOpen = false;
+
+        let userSessionProfile = {
+            name: "Tamana",
+            phone: "9876543210",
+            pincode: "147002",
+            address: "Model Town, Phase 1, Near Central Park"
+        };
+
+        // DOM CONTENT INITIALIZATION LOOP
+        document.addEventListener("DOMContentLoaded", () => {
+            refreshNavbarUserProfileDisplay();
+            refreshAddressDropdown();
+            renderMedicineGrid(MEDICINE_DATASET);
+            renderLabTestsGrid(LAB_TESTS_DATASET);
+            renderSelfCareGrid(SELF_CARE_DATASET);
+            renderOrdersHistoryTab();
+            setupAddressDropdownListeners();
+        });
+
+        // ADDRESS DROPDOWN LOGIC LAYER
+        function setupAddressDropdownListeners() {
+            const trigger = document.getElementById("location-dropdown-trigger");
+            trigger.addEventListener("click", (e) => {
+                if (e.target.closest(".address-dropdown-panel") || e.target.closest(".btn-edit-address")) return;
+                toggleAddressDropdown();
+            });
+
+            document.addEventListener("click", (e) => {
+                if (!trigger.contains(e.target) && isAddressDropdownOpen) {
+                    closeAddressDropdown();
+                }
+            });
+        }
+
+        function toggleAddressDropdown() {
+            const trigger = document.getElementById("location-dropdown-trigger");
+            const panel = document.getElementById("address-dropdown-panel");
+            isAddressDropdownOpen = !isAddressDropdownOpen;
+
+            if (isAddressDropdownOpen) {
+                trigger.classList.add("active");
+                panel.classList.add("open");
+            } else {
+                trigger.classList.remove("active");
+                panel.classList.remove("open");
+            }
+        }
+
+        function closeAddressDropdown() {
+            const trigger = document.getElementById("location-dropdown-trigger");
+            const panel = document.getElementById("address-dropdown-panel");
+            trigger.classList.remove("active");
+            panel.classList.remove("open");
+            isAddressDropdownOpen = false;
+        }
+
+        function refreshAddressDropdown() {
+            document.getElementById("dropdown-user-name").textContent = userSessionProfile.name;
+            document.getElementById("dropdown-user-phone").textContent = userSessionProfile.phone;
+            document.getElementById("dropdown-user-pincode").textContent = userSessionProfile.pincode;
+            document.getElementById("dropdown-user-address").textContent = userSessionProfile.address;
+        }
+
+        // AI ASSISTANT PANEL INTERFACE TOGGLE
+        function toggleAIPanel() {
+            const panel = document.getElementById("ai-side-panel");
+            const backdrop = document.getElementById("ai-panel-backdrop");
+            const btn = document.getElementById("ai-toggle-btn");
+            isAIPanelOpen = !isAIPanelOpen;
+
+            if (isAIPanelOpen) {
+                panel.classList.add("open");
+                backdrop.classList.add("open");
+                btn.classList.add("active");
+            } else {
+                panel.classList.remove("open");
+                backdrop.classList.remove("open");
+                btn.classList.remove("active");
+            }
+        }
+
+        // USER WORKSPACE PROFILE SUB-SYSTEM
+        function refreshNavbarUserProfileDisplay() {
+            const displayNode = document.getElementById("user-display-name");
+            if (displayNode) {
+                displayNode.textContent = `${userSessionProfile.name}, ${userSessionProfile.pincode}`;
+            }
+        }
+
+        function openProfileSettingsModal() {
+            document.getElementById("settings-user-name").value = userSessionProfile.name;
+            document.getElementById("settings-user-phone").value = userSessionProfile.phone;
+            document.getElementById("settings-user-pincode").value = userSessionProfile.pincode;
+            document.getElementById("settings-user-address").value = userSessionProfile.address;
+            document.getElementById("portal-settings-overlay").classList.remove("hidden");
+        }
+
+        function closeProfileSettingsModal() {
+            document.getElementById("portal-settings-overlay").classList.add("hidden");
+        }
+
+        function saveUserProfileData(event) {
+            event.preventDefault();
+            userSessionProfile.name = document.getElementById("settings-user-name").value.trim();
+            userSessionProfile.phone = document.getElementById("settings-user-phone").value.trim();
+            userSessionProfile.pincode = document.getElementById("settings-user-pincode").value.trim();
+            userSessionProfile.address = document.getElementById("settings-user-address").value.trim();
+
+            refreshNavbarUserProfileDisplay();
+            refreshAddressDropdown();
+            appendSystemAuditorLog(`Profile updated. Active user: <strong>${userSessionProfile.name}</strong>.`);
+            closeProfileSettingsModal();
+        }
+
+        // WORKSPACE VIEW TAB ROUTING
+        function switchActiveTab(event, targetTab) {
+            SYSTEM_ACTIVE_TAB = targetTab;
+            const triggers = { MEDS: "tab-meds-trigger", LABS: "tab-labs-trigger", CARE: "tab-care-trigger", ORDERS: "tab-orders-trigger" };
+            const views = { MEDS: "medicines-view-section", LABS: "lab-tests-view-section", CARE: "self-care-view-section", ORDERS: "orders-history-view-section" };
+
+            Object.keys(triggers).forEach(key => {
+                const trigEl = document.getElementById(triggers[key]);
+                const viewEl = document.getElementById(views[key]);
+                if (key === targetTab) {
+                    if (trigEl) trigEl.classList.add("active");
+                    if (viewEl) viewEl.classList.remove("hidden");
+                } else {
+                    if (trigEl) trigEl.classList.remove("active");
+                    if (viewEl) viewEl.classList.add("hidden");
+                }
+            });
+
+            if (targetTab === "ORDERS") renderOrdersHistoryTab();
+        }
+
+        // GRID RENDER ENGINE SUB-ROUTINES
+        function renderMedicineGrid(targetDataset) {
+            const container = document.getElementById("medicine-dashboard-grid");
+            if (!container) return;
+            container.innerHTML = "";
+            targetDataset.forEach(med => {
+                const qty = APPLICATION_CART[med.id] || 0;
+                const card = document.createElement("div");
+                card.className = "product-item-card";
+                card.style.cursor = "pointer";
+
+                card.onclick = (e) => {
+                    if (e.target.closest('.action-btn-cell') || e.target.closest('.quantity-modifier-widget')) return;
+                    fetchProductInsights(med.name, med.composition);
+                };
+
+                const btnMarkup = qty > 0
+                    ? `<div class="quantity-modifier-widget"><button class="widget-btn" onclick="modifyItemQuantity(${med.id}, -1, 'MED')">-</button><div class="widget-value">${qty}</div><button class="widget-btn" onclick="modifyItemQuantity(${med.id}, 1, 'MED')">+</button></div>`
+                    : `<button class="btn-card-add-cart action-btn-cell" onclick="initializeCartItem(${med.id}, 'MED')"><i class="fa-solid fa-plus"></i> Add</button>`;
+
+                card.innerHTML = `
+                    <div class="card-top-info">
+                        <div class="med-icon-avatar ${med.otc ? 'otc-type' : ''}"><i class="${med.otc ? 'fa-solid fa-prescription-bottle' : 'fa-solid fa-pills'}"></i></div>
+                        <div class="med-details-block"><h4 class="prod-title-lbl">${med.name}</h4><p class="prod-desc-lbl">${med.composition}</p></div>
+                    </div>
+                    <div class="price-action-row"><span class="price-val">₹${med.price.toFixed(2)}</span><div id="action-wrapper-cell-${med.id}">${btnMarkup}</div></div>`;
+                container.appendChild(card);
+            });
+        }
+
+        function renderLabTestsGrid(targetDataset) {
+            const container = document.getElementById("lab-tests-dashboard-grid");
+            if (!container) return;
+            container.innerHTML = "";
+            targetDataset.forEach(test => {
+                const qty = APPLICATION_CART[test.id] || 0;
+                const card = document.createElement("div");
+                card.className = "product-item-card";
+                card.style.cursor = "pointer";
+
+                card.onclick = (e) => {
+                    if (e.target.closest('.action-btn-cell') || e.target.closest('.quantity-modifier-widget')) return;
+                    fetchProductInsights(test.name, test.composition);
+                };
+
+                const btnMarkup = qty > 0
+                    ? `<div class="quantity-modifier-widget" style="background:#8b5cf6;"><button class="widget-btn" onclick="modifyItemQuantity(${test.id}, -1, 'LAB')">-</button><div class="widget-value">${qty}</div><button class="widget-btn" onclick="modifyItemQuantity(${test.id}, 1, 'LAB')">+</button></div>`
+                    : `<button class="btn-card-add-cart action-btn-cell" style="border-color:#8b5cf6; color:#8b5cf6;" onclick="initializeCartItem(${test.id}, 'LAB')"><i class="fa-solid fa-microscope"></i> Book Test</button>`;
+
+                card.innerHTML = `
+                    <div class="card-top-info">
+                        <div class="med-icon-avatar lab-type"><i class="fa-solid fa-flask-vial"></i></div>
+                        <div class="med-details-block"><h4 class="prod-title-lbl">${test.name}</h4><p class="prod-desc-lbl">${test.composition}</p></div>
+                    </div>
+                    <div class="price-action-row"><span class="price-val">₹${test.price.toFixed(2)}</span><div id="action-wrapper-cell-${test.id}">${btnMarkup}</div></div>`;
+                container.appendChild(card);
+            });
+        }
+
+        function renderSelfCareGrid(targetDataset) {
+            const container = document.getElementById("self-care-dashboard-grid");
+            if (!container) return;
+            container.innerHTML = "";
+            targetDataset.forEach(care => {
+                const qty = APPLICATION_CART[care.id] || 0;
+                const card = document.createElement("div");
+                card.className = "product-item-card";
+                card.style.cursor = "pointer";
+
+                card.onclick = (e) => {
+                    if (e.target.closest('.action-btn-cell') || e.target.closest('.quantity-modifier-widget')) return;
+                    fetchProductInsights(care.name, care.composition);
+                };
+
+                const subCatClass = care.subCategory ? `sub-cat-${care.subCategory}` : '';
+
+                const btnMarkup = qty > 0
+                    ? `<div class="quantity-modifier-widget" style="background:var(--care-pink);"><button class="widget-btn" onclick="modifyItemQuantity(${care.id}, -1, 'CARE')">-</button><div class="widget-value">${qty}</div><button class="widget-btn" onclick="modifyItemQuantity(${care.id}, 1, 'CARE')">+</button></div>`
+                    : `<button class="btn-card-add-cart action-btn-cell" style="border-color:var(--care-pink); color:var(--care-pink);" onclick="initializeCartItem(${care.id}, 'CARE')"><i class="fa-solid fa-cart-plus"></i> Add</button>`;
+
+                card.innerHTML = `
+                    <div class="card-top-info">
+                        <div class="med-icon-avatar care-type ${subCatClass}"><i class="${care.icon || 'fa-solid fa-sparkles'}"></i></div>
+                        <div class="med-details-block"><h4 class="prod-title-lbl">${care.name}</h4><p class="prod-desc-lbl">${care.composition}</p></div>
+                    </div>
+                    <div class="price-action-row"><span class="price-val">₹${care.price.toFixed(2)}</span><div id="action-wrapper-cell-${care.id}">${btnMarkup}</div></div>`;
+                container.appendChild(card);
+            });
+        }
+
+        // WORKSPACE SEARCH METRIC PROCESSING ENGINE
+        function filterActiveWorkspace() {
+            const searchVal = document.getElementById("dashboard-search-field").value.toLowerCase().trim();
+            
+            if (SYSTEM_ACTIVE_TAB === "MEDS") {
+                const filtered = MEDICINE_DATASET.filter(item => 
+                    item.name.toLowerCase().includes(searchVal) || item.composition.toLowerCase().includes(searchVal)
+                );
+                renderMedicineGrid(filtered);
+            } else if (SYSTEM_ACTIVE_TAB === "LABS") {
+                const filtered = LAB_TESTS_DATASET.filter(item => 
+                    item.name.toLowerCase().includes(searchVal) || item.composition.toLowerCase().includes(searchVal)
+                );
+                renderLabTestsGrid(filtered);
+            } else if (SYSTEM_ACTIVE_TAB === "CARE") {
+                const filtered = SELF_CARE_DATASET.filter(item => 
+                    item.name.toLowerCase().includes(searchVal) || item.composition.toLowerCase().includes(searchVal)
+                );
+                renderSelfCareGrid(filtered);
+            }
+        }
+
+        // APPLICATION CART INTERNAL COMPONENT MANAGEMENT
+        function initializeCartItem(productId, productType) {
+            APPLICATION_CART[productId] = 1;
+            updateGlobalCartCounters();
+            rebuildTargetWidgetCell(productId, productType);
+        }
+
+        function modifyItemQuantity(productId, modifier, productType) {
+            if (!APPLICATION_CART[productId]) return;
+            APPLICATION_CART[productId] += modifier;
+            
+            if (APPLICATION_CART[productId] <= 0) {
+                delete APPLICATION_CART[productId];
+            }
+            
+            updateGlobalCartCounters();
+            rebuildTargetWidgetCell(productId, productType);
+            
+            if (!document.getElementById("application-cart-overlay").classList.contains("hidden")) {
+                refreshInteractiveCartModal();
+            }
+        }
+
+        function rebuildTargetWidgetCell(productId, productType) {
+            const wrapper = document.getElementById(`action-wrapper-cell-${productId}`);
+            if (!wrapper) return;
+            
+            const qty = APPLICATION_CART[productId] || 0;
+            let config = { bg: "var(--brand-teal-teal)", border: "var(--brand-teal-teal)", text: "var(--brand-teal-teal)", label: "<i class='fa-solid fa-plus'></i> Add" };
+            
+            if (productType === "LAB") {
+                config = { bg: "#8b5cf6", border: "#8b5cf6", text: "#8b5cf6", label: "<i class='fa-solid fa-microscope'></i> Book Test" };
+            } else if (productType === "CARE") {
+                config = { bg: "var(--care-pink)", border: "var(--care-pink)", text: "var(--care-pink)", label: "<i class='fa-solid fa-cart-plus'></i> Add" };
+            }
+
+            if (qty > 0) {
+                wrapper.innerHTML = `
+                    <div class="quantity-modifier-widget" style="background:${config.bg};">
+                        <button class="widget-btn" onclick="modifyItemQuantity(${productId}, -1, '${productType}')">-</button>
+                        <div class="widget-value">${qty}</div>
+                        <button class="widget-btn" onclick="modifyItemQuantity(${productId}, 1, '${productType}')">+</button>
+                    </div>`;
+            } else {
+                wrapper.innerHTML = `<button class="btn-card-add-cart action-btn-cell" style="border-color:${config.border}; color:${config.text};" onclick="initializeCartItem(${productId}, '${productType}')">${config.label}</button>`;
+            }
+        }
+
+        function findProductLookup(id) {
+            return MEDICINE_DATASET.find(p => p.id === id) || 
+                   LAB_TESTS_DATASET.find(p => p.id === id) || 
+                   SELF_CARE_DATASET.find(p => p.id === id);
+        }
+
+        function calculateCurrentCartBreakdown() {
+            let rawTotal = 0;
+            let itemsCount = 0;
+            
+            Object.keys(APPLICATION_CART).forEach(id => {
+                const product = findProductLookup(parseInt(id));
+                if (product) {
+                    const qty = APPLICATION_CART[id];
+                    rawTotal += product.price * qty;
+                    itemsCount += qty;
+                }
+            });
+            
+            let discount = rawTotal * 0.15; // Flat 15% Promotion Discount Module Engine
+            let finalPayable = rawTotal - discount;
+            
+            return { count: itemsCount, raw: rawTotal, discount: discount, final: finalPayable };
+        }
+
+        function updateGlobalCartCounters() {
+            const data = calculateCurrentCartBreakdown();
+            document.getElementById("nav-cart-count-badge").textContent = data.count;
+            document.getElementById("nav-cart-total-amount").textContent = `₹${data.final.toFixed(2)}`;
+        }
+
+        // MODAL DISPLAY LOGIC LAYER
+        function openInteractiveCartOverlay() {
+            refreshInteractiveCartModal();
+            document.getElementById("application-cart-overlay").classList.remove("hidden");
+        }
+
+        function closeInteractiveCartOverlay() {
+            document.getElementById("application-cart-overlay").classList.add("hidden");
+        }
+
+        function refreshInteractiveCartModal() {
+            const listRoot = document.getElementById("modal-cart-items-list-root");
+            if (!listRoot) return;
+            listRoot.innerHTML = "";
+            
+            const cartKeys = Object.keys(APPLICATION_CART);
+            
+            if (cartKeys.length === 0) {
+                listRoot.innerHTML = `<div style="padding:40px 20px; text-align:center; color:var(--text-muted); font-weight:600;"><i class="fa-solid fa-basket-shopping" style="font-size:2rem; margin-bottom:10px; display:block; color:#cbd5e1;"></i>Your active cart space is completely empty.</div>`;
+            } else {
+                cartKeys.forEach(id => {
+                    const product = findProductLookup(parseInt(id));
+                    if (!product) return;
+                    
+                    const qty = APPLICATION_CART[id];
+                    const rowTotal = product.price * qty;
+                    const itemRow = document.createElement("div");
+                    itemRow.className = "cart-modal-row-item";
+                    
+                    itemRow.innerHTML = `
+                        <div class="item-meta-details">
+                            <h5>${product.name}</h5>
+                            <span>₹${product.price.toFixed(2)} &times; ${qty}</span>
+                        </div>
+                        <div class="item-right-price-block">
+                            <span class="modal-price-calc">₹${rowTotal.toFixed(2)}</span>
+                            <button class="modal-remove-item-btn" onclick="removeAllInstancesOfProduct(${product.id}, '${product.type}')"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>`;
+                    listRoot.appendChild(itemRow);
+                });
+            }
+            
+            const breakdown = calculateCurrentCartBreakdown();
+            document.getElementById("modal-raw-total-value").textContent = `₹${breakdown.raw.toFixed(2)}`;
+            document.getElementById("modal-discount-value").textContent = `-₹${breakdown.discount.toFixed(2)}`;
+            document.getElementById("modal-grand-total-value").textContent = `₹${breakdown.final.toFixed(2)}`;
+        }
+
+        function removeAllInstancesOfProduct(id, type) {
+            if (APPLICATION_CART[id]) {
+                delete APPLICATION_CART[id];
+                updateGlobalCartCounters();
+                rebuildTargetWidgetCell(id, type);
+                refreshInteractiveCartModal();
+            }
+        }
+
+        // TRANSACTION LEDGER ARCHIVE MANAGEMENT ROUTE
+        function executeOrderPlacementRoute() {
+            const cartKeys = Object.keys(APPLICATION_CART);
+            if (cartKeys.length === 0) {
+                alert("Your cart is empty. Please add items before checking out.");
+                return;
+            }
+            
+            const breakdown = calculateCurrentCartBreakdown();
+            const orderId = `MS-${Math.floor(100000 + Math.random() * 900000)}`;
+            const timestamp = new Date().toLocaleString();
+            
+            let purchasedItems = [];
+            cartKeys.forEach(id => {
+                const item = findProductLookup(parseInt(id));
+                if (item) {
+                    purchasedItems.push({ name: item.name, qty: APPLICATION_CART[id], total: item.price * APPLICATION_CART[id] });
+                }
+            });
+            
+            const newOrderRecord = {
+                id: orderId,
+                time: timestamp,
+                items: purchasedItems,
+                summary: breakdown
+            };
+            
+            PLACED_ORDERS_HISTORY.unshift(newOrderRecord);
+            alert(`🎉 Your order ${orderId} has been booked successfully! Total: ₹${breakdown.final.toFixed(2)}`);
+            
+            // State Clear Out Control
+            APPLICATION_CART = {};
+            updateGlobalCartCounters();
+            
+            // UI Element Grid Re-flush
+            renderMedicineGrid(MEDICINE_DATASET);
+            renderLabTestsGrid(LAB_TESTS_DATASET);
+            renderSelfCareGrid(SELF_CARE_DATASET);
+            
+            closeInteractiveCartOverlay();
+            switchActiveTab(null, 'ORDERS');
+            appendSystemAuditorLog(`Order <strong>${orderId}</strong> created successfully for ₹${breakdown.final.toFixed(2)}.`);
+        }
+
+        function renderOrdersHistoryTab() {
+            const container = document.getElementById("orders-history-dashboard-grid");
+            if (!container) return;
+            container.innerHTML = "";
+            
+            if (PLACED_ORDERS_HISTORY.length === 0) {
+                container.style.display = "block";
+                container.innerHTML = `<div style="grid-column: span 4; background:white; border:1px solid var(--border-color); border-radius:16px; padding:40px; text-align:center; color:var(--text-muted); font-weight:600;"><i class="fa-solid fa-clock-rotate-left" style="font-size:2.5rem; margin-bottom:12px; display:block; color:#cbd5e1;"></i>No verified real-time purchase transactions found in this workspace session.</div>`;
+                return;
+            }
+            
+            container.style.display = "grid";
+            PLACED_ORDERS_HISTORY.forEach(order => {
+                const receiptCard = document.createElement("div");
+                receiptCard.className = "order-receipt-card";
+                
+                let itemsRowsMarkup = "";
+                order.items.forEach(i => {
+                    itemsRowsMarkup += `
+                        <div class="receipt-product-row">
+                            <span class="r-name">${i.name} <small style="color:var(--text-muted); margin-left:5px;">(x${i.qty})</small></span>
+                            <span class="r-price">₹${i.total.toFixed(2)}</span>
+                        </div>`;
+                });
+                
+                receiptCard.innerHTML = `
+                    <div class="receipt-header-row">
+                        <div>
+                            <span class="receipt-id-tag">${order.id}</span>
+                            <span class="receipt-timestamp-lbl">${order.time}</span>
+                        </div>
+                        <span class="receipt-status-badge"><i class="fa-solid fa-circle-check"></i> Dispatched</span>
+                    </div>
+                    <div class="receipt-items-container">${itemsRowsMarkup}</div>
+                    <div class="receipt-calculation-ledger">
+                        <div class="ledger-row"><span>Cart Value:</span><span>₹${order.summary.raw.toFixed(2)}</span></div>
+                        <div class="ledger-row discount-row"><span>15% Promotion Discount:</span><span>-₹${order.summary.discount.toFixed(2)}</span></div>
+                        <div class="ledger-row grand-final"><span>Grand Total Paid:</span><span>₹${order.summary.final.toFixed(2)}</span></div>
+                    </div>`;
+                container.appendChild(receiptCard);
+            });
+        }
+
+        // REAL-TIME AI STREAM LOGS MANAGEMENT LAYER
+        function fetchProductInsights(productName, productComposition) {
+            alert(`${productName}\n\n${productComposition}`);
+}
+        // CONVERSATIONAL DATA STREAM PIPELINE
+        function handleAIViaKey(event) {
+            if (event.key === "Enter") sendPromptToGemini();
+        }
+
+        function sendPromptToGemini() {
+            const inputEl = document.getElementById("ai-user-prompt-field");
+            const userPrompt = inputEl.value.trim();
+            if (!userPrompt) return;
+            
+            appendMessageToPanel(userPrompt, "user-node");
+            inputEl.value = "";
+            
+            if (userPrompt.toLowerCase() === "audit my cart") {
+                executeCartAuditMacro();
+                return;
+            }
+            
+            const loadingMessageId = `msg-loader-${Date.now()}`;
+            appendLoadingBubbleToPanel(loadingMessageId);
+            
+            fetch(GEMINI_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ contents: [{ parts: [{ text: userPrompt }] }] })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById(loadingMessageId).remove();
+                let reply = data.contents[0].parts[0].text;
+                reply = reply.replace(/\n/g, "<br>").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+                appendMessageToPanel(reply, "system-bot");
+            })
+            .catch(() => {
+                document.getElementById(loadingMessageId).remove();
+                appendMessageToPanel("<span style='color:var(--clinical-red);'>Network error while streaming audit.</span>", "system-bot");
+            });
+        }
+
+        function executeCartAuditMacro() {
+            const keys = Object.keys(APPLICATION_CART);
+            if (keys.length === 0) {
+                appendMessageToPanel("Your workspace cart is empty. There are no medical components to audit currently.", "system-bot");
+                return;
+            }
+            
+            let details = [];
+            keys.forEach(id => {
+                const item = findProductLookup(parseInt(id));
+                if (item) details.push(`${item.name} (${item.composition || 'Self care component'}) x${APPLICATION_CART[id]}`);
+            });
+            
+            const loadingMessageId = `msg-loader-${Date.now()}`;
+            appendLoadingBubbleToPanel(loadingMessageId);
+            
+            const prompt = `Act as an expert pharmacological interaction auditor. Audit the following medical/health items cart for a patient: [${details.join(", ")}]. Check if there are any risky double-dosages, conflicting product compositions, or standard health recommendations. Structure clearly.`;
+            
+            fetch(GEMINI_API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById(loadingMessageId).remove();
+                let auditReport = data.contents[0].parts[0].text;
+                auditReport = auditReport.replace(/\n/g, "<br>").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+                appendMessageToPanel(auditReport, "system-bot");
+            })
+            .catch(() => {
+                document.getElementById(loadingMessageId).remove();
+                appendMessageToPanel("<span style='color:var(--clinical-red);'>Failed to generate active cart audit report.</span>", "system-bot");
+            });
+
+        }
+
+
+        // TEXT RENDERING APPENDEES
+        function appendMessageToPanel(text, senderClass) {
+            const box = document.getElementById("ai-chat-scroller");
+            const bubble = document.createElement("div");
+            bubble.className = `msg-bubble ${senderClass}`;
+            
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            bubble.innerHTML = `
+                <div class="msg-content">
+                    <p>${text}</p>
+                    <span class="msg-time-stamp">${timeStr}</span>
+                </div>`;
+                
+            box.appendChild(bubble);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function appendLoadingBubbleToPanel(id) {
+            const box = document.getElementById("ai-chat-scroller");
+            const bubble = document.createElement("div");
+            bubble.className = "msg-bubble system-bot";
+            bubble.id = id;
+            
+            bubble.innerHTML = `
+                <div class="msg-content">
+                    <p><i class="fa-solid fa-circle-notch fa-spin"></i> Streaming real-time telemetry analytics...</p>
+                </div>`;
+            box.appendChild(bubble);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function appendSystemAuditorLog(text) {
+            appendMessageToPanel(`<i class="fa-solid fa-circle-info" style="color:#38bdf8; margin-right:5px;"></i> ${text}`, "system-bot");
+        }
+
+        function clearAIChat() {
+            const box = document.getElementById("ai-chat-scroller");
+            box.innerHTML = `
+                <div class="msg-bubble system-bot">
+                    <div class="msg-content">
+                        <p>Chat logs cleared. System initialized and ready for new telemetry inputs.</p>
+                        <span class="msg-time-stamp">Logs Flushed</span>
+                    </div>
+                </div>`;
+            document.getElementById("ai-product-insights").style.display = "none";
+        }
+    </script>
+    <footer class="app-footer">
+    <div class="footer-container">
+
+        <!-- Brand Section -->
+        <div class="footer-column">
+            <h2 class="footer-logo">💊 MediSync</h2>
+            <p class="footer-text">
+                Your Smart Pharmacy & Healthcare Assistant.  
+                Find medicines, self-care products, and lab tests in one place with fast checkout and safe ordering.
+            </p>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-column">
+            <h3>Quick Links</h3>
+            <a href="#meds">Medicines</a>
+            <a href="#labs">Lab Tests</a>
+            <a href="#care">Self Care</a>
+            <a href="#orders">My Orders</a>
+        </div>
+
+        <!-- Support -->
+        <div class="footer-column">
+            <h3>Support</h3>
+            <a href="#">Help Center</a>
+            <a href="#">Return Policy</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms & Conditions</a>
+        </div>
+
+        <!-- Contact -->
+        <div class="footer-column">
+            <h3>Contact</h3>
+            <p>📍 Model Town, Phase 1</p>
+            <p>📞 +91 98765 43210</p>
+            <p>📧 support@medisync.com</p>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <p>© 2026 MediSync Pharmacy. All Rights Reserved.</p>
+    </div>
+</footer>
+<script src="consumer.js"></script>
+</body>
+</html>
