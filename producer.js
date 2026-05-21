@@ -670,7 +670,7 @@ function exitWorkspacePortal() {
     sessionStorage.removeItem("currentLoggedInUser");
 
     // Redirect to main landing page
-    window.location.href = "pro1.html";
+    window.location.href = "index.html";
 
 }
 function saveUserProfileConfigurations() {
